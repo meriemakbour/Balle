@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position: relative;">
+        <canvas style="position: absolute" id="jeux" width="800" height="500">
+
+        </canvas>
+        <div id="score" style="position: absolute;left: 20px; font-size: 24px">
+            Score : 0
+        </div>
+    </div>
+
+    <script>
+        var score = 0;
+        var can = document.getElementById("jeux");
+        var escore = document.getElementById("score");
+        var canWidth = 800;
+        var canHeight = 500;
+        var xtab = 25;
+        var ytab = 450;
+        r = 5
+
+        var x = 200, y = 200,
+            vx = 2, vy = 0;
+
+        var
+            ctx = can.getContext('2d');
+        ctx.fillRect(xtab, ytab, 200, 10);
+        var circles = new Array(20)
+
+        function setup() {
+            circles = circles.fill(0)
+                .map(_ => ({
+                    x: Math.random() * (can.width - 2 * r) + r,
+                    y: Math.random() * (can.width - 2 * r) + r,
+                    vx: Math.random() * 5 - 2.5,
+                    vy: Math.random() * 5 + 1,
+                }))
+        }
+
+        setup()
+
+
+        function update() {
+            // ctx.save()
+            // ctx.fillStyle = '#FFFFFF35'
+            // ctx.fillRect(0, 0, can.width, can.height)
+            // ctx.restore()
+            ctx.clearRect(0, 0, canWidth, canHeight);
+
+            drawCircles()
+
+        }
+
+        function drawCircles() {
+            circles.forEach(c => {
+                c.vx = (c.x - r < 0 || c.x + r > can.width) ? c.vx = -c.vx : c.vx
+                if (c.y > 500) c.y = 0;
+                if (xtab < c.x + r && xtab + 200 > c.x + r && ytab < c.y + r && ytab + 10 > c.y + r) {
+                    c.vy = -c.vy;
+                    score++;
+                    escore.innerText = 'Score :' + score;
+                }
+
+                ctx.beginPath()
+                ctx.arc(c.x, c.y, r, 0, 2 * Math.PI)
+                ctx.fill()
+                c.x -= c.vx
+                c.y += c.vy
+            })
+        }
+
+        function loop() {
+            update()
+            ctx.fillRect(xtab, ytab, 200, 10);
+            requestAnimationFrame(loop)
+        }
+
+        loop()
+
+
+        function tabmove(code) {
+
+            switch (code) {
+                case "ArrowRight":
+                    if (xtab + 200 < canWidth)
+                        xtab = xtab + 20
+                    ctx.clearRect(0, 0, canWidth, canHeight);
+
+                    ctx.fillRect(xtab, ytab, 200, 10);
+
+                    ;
+                    break;
+                case "ArrowLeft":
+                    if (xtab > 0)
+                        xtab = xtab - 20
+                    ctx.clearRect(0, 0, canWidth, canHeight);
+
+                    ctx.fillRect(xtab, ytab, 200, 10);
+                    ;
+                    break;
+            }
+        }
+
+        window.addEventListener("keydown", function (ev) {
+            tabmove(ev.code)
+        });
+    </script>
+</body>
+
+</html>
